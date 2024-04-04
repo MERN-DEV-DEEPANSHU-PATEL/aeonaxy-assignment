@@ -1,17 +1,25 @@
-import React from "react";
+import makeRequest from "@/hooks/usePrivateAxios";
+import userAtom from "@/recoil/userAtom";
+import { FC, useEffect } from "react";
 import { FaCheckCircle, FaEnvelope } from "react-icons/fa";
+import { toast } from "react-toastify";
+import { useRecoilValue } from "recoil";
 
-interface VerifyEmailProps {
-  email: string;
-  onResendConfirmation: () => void;
-  onChangeEmail: () => void;
-}
+const VerifyEmail: FC = () => {
+  const user = useRecoilValue(userAtom);
+  const reqOtp = async () => {
+    try {
+      await makeRequest.get("/auth/user/getotp");
+      toast.success("Email sent For verificcation");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-const VerifyEmail: React.FC<VerifyEmailProps> = ({
-  email,
-  onResendConfirmation,
-  onChangeEmail,
-}) => {
+  useEffect(() => {
+    reqOtp();
+  }, []);
+
   return (
     <div className="container mx-auto text-center py-12">
       <h1 className="text-3xl font-bold mb-4">Please verify your email...</h1>
@@ -26,25 +34,25 @@ const VerifyEmail: React.FC<VerifyEmailProps> = ({
           Please verify your email address. We've sent a confirmation email to:
         </p>
       </div>
-      <p className="text-lg font-semibold mb-4">{email}</p>
       <p className="text-gray-600 mb-6">
         Click the confirmation link in that email to begin using Dribbble.
       </p>
       <div className="space-y-2">
+        <strong>{user.user?.email}</strong>
         <p className="text-gray-600">
           Didn't receive the email? Check your Spam folder, it may have been
           caught by a filter. If you still don't see it, you can{" "}
-          <button
-            className="text-pink-500 underline"
-            onClick={onResendConfirmation}
-          >
+          <button className="text-pink-500 underline" onClick={() => reqOtp()}>
             resend the confirmation email
           </button>
           .
         </p>
         <p className="text-gray-600">
           Wrong email address?{" "}
-          <button className="text-pink-500 underline" onClick={onChangeEmail}>
+          <button
+            className="text-pink-500 underline"
+            onClick={() => toast.info("Email Change Not Added")}
+          >
             Change it
           </button>
           .

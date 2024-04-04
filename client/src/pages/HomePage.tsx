@@ -1,11 +1,13 @@
+import ExploreMyResume from "@/components/ExploreMyResume";
 import VerifyEmail from "@/components/VerifyEmail";
-import React from "react";
+import userAtom from "@/recoil/userAtom";
+import { useRecoilValue } from "recoil";
 
 const HomePage = () => {
+  const user = useRecoilValue(userAtom);
+
   return (
-    <div>
-      <VerifyEmail />
-    </div>
+    <div>{!user?.user?.isVerifyed ? <VerifyEmail /> : <ExploreMyResume />}</div>
   );
 };
 

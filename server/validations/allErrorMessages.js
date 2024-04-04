@@ -1,21 +1,20 @@
 import { body, param, validationResult } from "express-validator";
-import {
-  BadRequestError,
-  InternalServerError,
-} from "../errors/customErrors.js";
+// import { ValidationError } from "../errors/customErrors.js";
 
 export const withValidationErrors = (validateValues) => {
   return [
     validateValues,
     (req, res, next) => {
       const errors = validationResult(req);
-      console.log(errors);
-      if (!errors.isEmpty()) {
+      if (errors.errors.length) {
         const errorMessages = errors.array().map((error) => error.msg);
-        console.log(errorMessages);
-        throw new BadRequestError(errorMessages);
+        const errorFields = errors.array().map((error) => error.path);
+        res
+          .status(422)
+          .json({ msg: errorMessages.toString(), inputNames: errorFields });
+      } else {
+        next();
       }
-      next();
     },
   ];
 };

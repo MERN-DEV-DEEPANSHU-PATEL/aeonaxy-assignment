@@ -1,6 +1,9 @@
 import Logo from "@/assets/Logo";
+import makeRequest from "@/hooks/usePrivateAxios";
 import React, { useState } from "react";
 import { FaSearch } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface HeaderProps {
   isLoggedIn: boolean;
@@ -8,6 +11,12 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ isLoggedIn = true }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const logout = () =>
+    makeRequest.get("/auth/user/logout").then(() => {
+      navigate("/auth");
+      toast.info("Logout successful");
+    });
   return (
     <header className="bg-white shadow-md py-4">
       <div className="container mx-auto flex justify-between items-center">
@@ -52,8 +61,11 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = true }) => {
             <FaSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           </div>
           {isLoggedIn ? (
-            <button className="bg-pink-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-pink-600 hidden md:block">
-              Upload
+            <button
+              onClick={logout}
+              className="bg-red-400 text-white px-4 py-2 rounded-lg shadow-md hover:bg-pink-600 hidden md:block"
+            >
+              Logout
             </button>
           ) : (
             <button className="bg-gray-200 text-gray-600 px-4 py-2 rounded-lg shadow-md hover:bg-gray-300">

@@ -1,4 +1,5 @@
 import { FC, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface Option {
   id: number;
@@ -47,6 +48,8 @@ const WhyDribble: FC = () => {
   const isOptionSelected = (option: Option) => {
     return selectedOptions.some((opt) => opt.id === option.id);
   };
+
+  const navigate = useNavigate();
 
   return (
     <div className="md:max-w-[90%] mx-auto p-1 md:p-6 text-center">
@@ -118,7 +121,10 @@ const WhyDribble: FC = () => {
         <h4 className="text-gray-900 font-semibold mb-4">
           Anything else? You can select multiple
         </h4>
-        <button className="bg-pink-500 text-white px-12 py-2 rounded-lg shadow-md">
+        <button
+          onClick={() => navigate("/")}
+          className="bg-pink-500 text-white px-12 py-2 rounded-lg shadow-md"
+        >
           Finish
         </button>
         <p>or press RETURN</p>

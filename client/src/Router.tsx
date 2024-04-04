@@ -1,21 +1,31 @@
 import { createBrowserRouter } from "react-router-dom";
-import Layout, { UnAuthLayout } from "./Layout";
+import AuthLayout, { UnAuthLayout } from "./Layout";
+import { Suspense, lazy } from "react";
+import Spinner from "./components/Spinner";
 
-import NotFoundPage from "./pages/404NotFoundPage";
-import UserAuthPage from "./pages/UserAuthPage";
-import HomePage from "./pages/HomePage";
-import ProfileUpdatePage from "./pages/UpdateProfilePage";
-import WhyDribble from "./pages/WhyDribble";
+const NotFoundPage = lazy(() => import("./pages/404NotFoundPage"));
+const UserAuthPage = lazy(() => import("./pages/UserAuthPage"));
+const HomePage = lazy(() => import("./pages/HomePage"));
+const ProfileUpdatePage = lazy(() => import("./pages/UpdateProfilePage"));
+const WhyDribble = lazy(() => import("./pages/WhyDribble"));
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
-    errorElement: <NotFoundPage />,
+    element: <AuthLayout />,
+    errorElement: (
+      <Suspense fallback={<Spinner />}>
+        <NotFoundPage />
+      </Suspense>
+    ),
     children: [
       {
         path: "/",
-        element: <HomePage />,
+        element: (
+          <Suspense fallback={<Spinner />}>
+            <HomePage />
+          </Suspense>
+        ),
       },
     ],
   },
@@ -25,15 +35,27 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/auth/",
-        element: <UserAuthPage />,
+        element: (
+          <Suspense fallback={<Spinner />}>
+            <UserAuthPage />
+          </Suspense>
+        ),
       },
       {
         path: "/auth/profile",
-        element: <ProfileUpdatePage />,
+        element: (
+          <Suspense fallback={<Spinner />}>
+            <ProfileUpdatePage />
+          </Suspense>
+        ),
       },
       {
-        path: "/auth/x",
-        element: <WhyDribble />,
+        path: "/auth/whydribbble",
+        element: (
+          <Suspense fallback={<Spinner />}>
+            <WhyDribble />
+          </Suspense>
+        ),
       },
     ],
   },

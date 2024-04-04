@@ -4,25 +4,17 @@ import { BadRequestError } from "../errors/customErrors.js";
 import UserModel from "../models/userModel.js";
 
 export const validateRegisterInput = withValidationErrors([
-  body("firstName")
+  body("fullName")
     .notEmpty()
     .withMessage("Name can not be Empty")
     .isLength({ max: 50 })
-    .withMessage("Name is too long"),
-  body("lastName")
-    .notEmpty()
-    .withMessage("lastName can not be Empty")
-    .isLength({ max: 50 })
-    .withMessage("lastName is too long"),
-  body("phoneNumber")
-    .notEmpty()
-    .withMessage("contact number is required")
-    .isLength({ max: 10, min: 10 })
-    .withMessage("Please enter your correct 10 digit number"),
+    .withMessage("Name is too long")
+    .isLength({ min: 3 })
+    .withMessage("Name is too Short"),
   body("email")
     .notEmpty()
     .withMessage("email is required")
-    .isLength({ max: 100 })
+    .isLength({ max: 200 })
     .withMessage("Email is too long")
     .isEmail()
     .withMessage("invalid email format")
@@ -30,6 +22,17 @@ export const validateRegisterInput = withValidationErrors([
       const user = await UserModel.findOne({ email });
       if (user) {
         throw new BadRequestError("email already exists");
+      }
+    }),
+  body("username")
+    .notEmpty()
+    .withMessage("username is required")
+    .isLength({ max: 200 })
+    .withMessage("username is too long")
+    .custom(async (username) => {
+      const user = await UserModel.findOne({ username });
+      if (user) {
+        throw new BadRequestError("username already exists");
       }
     }),
   body("password")
@@ -53,23 +56,7 @@ export const validateLoginInput = withValidationErrors([
 ]);
 
 export const validateUpdateUserInput = withValidationErrors([
-  body("firstName").isLength({ max: 50 }).withMessage("firstName is too long"),
-  body("lastName").isLength({ max: 50 }).withMessage("lastName is too long"),
-  body("email")
-    .notEmpty()
-    .withMessage("Please enter your current or new email")
-    .isLength({ max: 100 })
-    .withMessage("Email is too long")
-    .isEmail()
-    .withMessage("invalid email format"),
-  body("phoneNumber")
-    .isLength({ max: 10, min: 10 })
-    .withMessage("Please Enter your 10 digit Number "),
-  body("password")
-    .isLength({ max: 200 })
-    .withMessage("password is too long")
-    .isLength({ min: 6 })
-    .withMessage("password must be at least 6 characters long"),
+  body("location").isLength({ max: 100 }).withMessage("location is too log"),
 ]);
 
 export const validateDeleteUserQuery = withValidationErrors([

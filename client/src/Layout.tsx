@@ -6,6 +6,8 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom, { isUser } from "./recoil/userAtom";
 import makeRequest from "./hooks/usePrivateAxios";
 import Spinner from "./components/Spinner";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/ReactToastify.min.css";
 
 const ProtectedRoute = ({ children }: any) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -18,7 +20,7 @@ const ProtectedRoute = ({ children }: any) => {
       setIsLoading(false);
     } catch (error) {
       console.log(error);
-      setUser({ user: undefined, isUser: false });
+      setUser({ user: null, isUser: false });
       setIsLoading(false);
     }
   };
@@ -57,6 +59,7 @@ const AuthLayout = () => {
       <footer>
         <Footer />
       </footer>
+      <ToastContainer />
     </ProtectedRoute>
   );
 };
@@ -67,6 +70,7 @@ export const UnAuthLayout = () => {
   return (
     <main>
       <Outlet />
+      <ToastContainer />
     </main>
   );
 };

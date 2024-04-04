@@ -1,17 +1,31 @@
+import { FC, useState, ChangeEvent } from "react";
+import { FiMapPin } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import makeRequest from "@/hooks/usePrivateAxios";
 import Logo from "@/assets/Logo";
-import { ChangeEvent, FC, useState } from "react";
-import { FiCamera, FiMapPin } from "react-icons/fi";
+
+interface AvatarInterface {
+  avatarBase64: string;
+  file: File | "";
+}
 
 const ProfileUpdatePage: FC = () => {
-  const [avatar, setAvatar] = useState<string>("");
+  const [avatar, setAvatar] = useState<AvatarInterface>({
+    file: "",
+    avatarBase64:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQARF_GF2A3qUV3mw0lHLS0Lg4HCYARJ-RvbkOSRz-M8g&s",
+  });
   const [location, setLocation] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const handleAvatarUpload = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
       const reader = new FileReader();
       reader.onload = () => {
-        setAvatar(reader.result as string);
+        setAvatar({ file: file, avatarBase64: reader.result as string });
       };
       reader.readAsDataURL(file);
     }
@@ -21,14 +35,29 @@ const ProfileUpdatePage: FC = () => {
     setLocation(event.target.value);
   };
 
-  const handleNextClick = () => {
-    console.log(avatar);
-    console.log(location);
+  const handleNextClick = async () => {
+    try {
+      setIsLoading(true);
+      const formData = new FormData();
+      formData.append("image", avatar.file);
+      formData.append("location", location);
+      const { data } = await makeRequest.put("/auth/user/update", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      toast.success(data.msg);
+      setIsLoading(false);
+      navigate("/auth/whydribbble");
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.response.data.msg);
+    }
   };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
-      <Logo className=" hidden sm:block absolute top-0 lg:top-10 left-20 w-32" />
+      <Logo className="hidden sm:block absolute top-0 lg:top-10 left-20 w-32" />
       <div className="bg-white rounded-lg shadow-md p-6 max-w-md w-full">
         <h2 className="text-2xl text-gray-500 font-bold mb-4">
           Welcome! Let's create your profile
@@ -48,26 +77,28 @@ const ProfileUpdatePage: FC = () => {
               type="file"
               id="avatar"
               name="avatar"
+              required
               accept="image/*"
               onChange={handleAvatarUpload}
               className="hidden"
             />
-            <div
-              className={`w-20 h-20 text-sm  hover:text-xl hover:border-dashed transiton-smooth rounded-full bg-gray-200 border-dotted border-2 border-gray-500 flex items-center justify-center text-gray-500 cursor-pointer ${
-                avatar ? "bg-cover bg-no-repeat" : ""
-              }`}
-              style={{ backgroundImage: `url(${avatar})` }}
+            <label
+              htmlFor="avatar"
+              className={`w-20 h-20 text-sm hover:text-xl hover:border-dashed transiton-smooth rounded-full bg-gray-200 border-dotted border-2 border-gray-500 flex items-center justify-center text-gray-500 cursor-pointer`}
             >
-              <FiCamera />
-            </div>
+              <img
+                src={avatar.avatarBase64}
+                alt="avatar"
+                className="w-14 h-14 hover:scale-110"
+              />
+            </label>
             <div>
               <label
                 htmlFor="avatar"
-                className="cursor-pointer my-10 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5   dark:text-white"
+                className="cursor-pointer my-10 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 dark:text-white"
               >
                 Choose Image
               </label>
-
               <p className="mt-4 text-sm text-gray-500">
                 &gt; Or choose one of our defaults
               </p>
@@ -85,6 +116,7 @@ const ProfileUpdatePage: FC = () => {
             <input
               type="text"
               id="location"
+              required
               value={location}
               onChange={handleLocationChange}
               placeholder="Enter a location"
@@ -99,6 +131,7 @@ const ProfileUpdatePage: FC = () => {
         <button
           onClick={handleNextClick}
           className="bg-pink-500 text-white py-2 px-4 rounded-md hover:bg-pink-600 transition-colors duration-300"
+          disabled={isLoading}
         >
           Next
         </button>

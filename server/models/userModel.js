@@ -1,11 +1,17 @@
 import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema({
-  firstName: String,
-  lastName: String,
+  fullName: String,
   email: String,
-  phoneNumber: Number,
+  username: String,
   password: String,
+  isVerifyed: { type: Boolean, default: false },
+  location: { type: String, default: "India" },
+  imageUrl: {
+    type: String,
+    default:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3LtPpyEGxYGWK-cFpXK3bvjQajWfoXXwnhTXY5X-xrQ&s",
+  },
 });
 
 UserSchema.methods.toJSON = function () {

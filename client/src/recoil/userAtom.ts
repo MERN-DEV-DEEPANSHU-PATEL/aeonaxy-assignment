@@ -1,8 +1,24 @@
 import { atom, selector } from "recoil";
 
-const userAtom = atom({
+interface User {
+  user: {
+    fullName: string;
+    email: string;
+    username: string;
+    password: string;
+    isVerifyed: boolean; // Note the correct spelling of 'isVerified'
+    location: string;
+    imageUrl: string;
+  } | null; // Use 'null' to handle initial state when user is not available
+  isUser: boolean;
+}
+
+export const userAtom = atom<User>({
   key: "userState",
-  default: { user: undefined, isUser: false },
+  default: {
+    user: null,
+    isUser: false,
+  },
 });
 
 export const isUser = selector({

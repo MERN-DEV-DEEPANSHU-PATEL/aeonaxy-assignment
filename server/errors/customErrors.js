@@ -20,6 +20,13 @@ class NotFoundError extends CustomAPIError {
     this.statusCode = StatusCodes.NOT_FOUND;
   }
 }
+class ValidationError extends CustomAPIError {
+  constructor(message) {
+    super(message);
+    this.name = "ValidationError";
+    this.statusCode = StatusCodes.UNPROCESSABLE_ENTITY;
+  }
+}
 class UnAuthenticatedError extends CustomAPIError {
   constructor(message) {
     super(message);

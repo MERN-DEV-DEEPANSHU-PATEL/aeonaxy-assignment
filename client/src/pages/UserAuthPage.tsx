@@ -1,36 +1,58 @@
 import Logo from "@/assets/Logo";
-import { FC, SyntheticEvent, useState } from "react";
+import Checkbox from "@/components/ui/Checkbox";
+import InputField from "@/components/ui/InputField";
+import makeRequest from "@/hooks/usePrivateAxios";
+import { FC, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const UserAuthPage: FC = () => {
   const [isMember, setIsMember] = useState(false);
   const [inputs, setInputs] = useState({
-    name: "",
+    fullName: "",
     username: "",
     email: "",
     password: "",
-    acceptPolicy: true,
+    acceptPolicy: false,
   });
   const [error, setError] = useState({
     isError: false,
     msg: "",
-    inputName: "",
+    inputNames: [],
   });
-
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const handleChange = (e: any) => {
+    setError((prev) => ({
+      ...prev,
+      inputNames: prev.inputNames.filter((inp) => inp !== e.target.name),
+    }));
     if (e.target && e.target.type === "checkbox") {
       setInputs((prev) => ({ ...prev, [e.target.name]: e.target.checked }));
     } else if (e.target) {
-      console.log(e);
       setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     }
   };
 
-  const onSubmit = (e: any) => {
+  const onSubmit = async (e: any) => {
     e.preventDefault();
-    try {
-      console.log(inputs);
-    } catch (error: any) {
-      setError(error.response);
+    if (!isMember) {
+      try {
+        console.log(inputs);
+        const { data } = await makeRequest.post("/auth/user/register", inputs);
+        console.log(data);
+        toast.success("Register Successful");
+        navigate("/auth/profile");
+        setIsLoading(false);
+      } catch (error: any) {
+        toast.error("Invalid Credentials");
+        setError({ isError: true, ...error.response.data });
+        setIsLoading(false);
+      }
+    } else {
+      await makeRequest.post("/auth/user/login", inputs);
+      toast.success("Login Success");
+      navigate("/");
     }
   };
 
@@ -72,115 +94,63 @@ const UserAuthPage: FC = () => {
           <form>
             {!isMember && (
               <>
-                <div className="mb-4">
-                  <label
-                    htmlFor="name"
-                    className="block text-gray-700 font-bold mb-2"
-                  >
-                    Name
-                  </label>
-                  <input
-                    onChange={handleChange}
-                    type="text"
-                    name="name"
-                    value={inputs.name}
-                    placeholder="John Doe"
-                    className={`w-full px-3 py-2 border ${
-                      error.inputName == "name"
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label
-                    htmlFor="username"
-                    className="block text-gray-700 font-bold mb-2"
-                  >
-                    Username
-                  </label>
-                  <input
-                    onChange={handleChange}
-                    type="text"
-                    name="username"
-                    value={inputs.username}
-                    placeholder="johndoe"
-                    className={`w-full px-3 py-2 border  ${
-                      error.inputName == "username"
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    }  rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
-                  />
-                </div>
+                <InputField
+                  onChange={handleChange}
+                  type="text"
+                  name="fullName"
+                  value={inputs.fullName}
+                  placeholder="John Doe"
+                  error={error}
+                  label="Name"
+                />
+                <InputField
+                  onChange={handleChange}
+                  type="text"
+                  name="username"
+                  value={inputs.username}
+                  placeholder="ex. johndoe"
+                  error={error}
+                  label="Username"
+                />
               </>
             )}
-            <div className="mb-4">
-              <label
-                htmlFor="email"
-                className="block text-gray-700 font-bold mb-2"
-              >
-                Email
-              </label>
-              <input
-                onChange={handleChange}
-                type="email"
-                name="email"
-                value={inputs.email}
-                placeholder="example@mail.com"
-                className={`w-full px-3 py-2 border  ${
-                  error.inputName == "email"
-                    ? "border-red-500"
-                    : "border-gray-300"
-                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
-              />
-            </div>
-            <div className="mb-6">
-              <label
-                htmlFor="password"
-                className="block text-gray-700 font-bold mb-2"
-              >
-                Password
-              </label>
-              <input
-                onChange={handleChange}
-                type="password"
-                name="password"
-                value={inputs.password}
-                placeholder="6+ characters strong password"
-                className={`w-full px-3 py-2 border  ${
-                  error.inputName == "password"
-                    ? "border-red-500"
-                    : "border-gray-300"
-                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
-              />
-            </div>
+            <InputField
+              onChange={handleChange}
+              type="email"
+              name="email"
+              value={inputs.email}
+              placeholder="ex. example@gmail.com"
+              error={error}
+              label="Email"
+            />
+            <InputField
+              onChange={handleChange}
+              type="password"
+              name="password"
+              value={inputs.password}
+              placeholder="ex. enter strong pass. of 6 char"
+              error={error}
+              label="Password"
+            />
             {!isMember && (
-              <div className="mb-6">
-                <div className="flex items-start">
-                  <div className="flex items-center h-5">
-                    <input
-                      onChange={handleChange}
-                      type="checkbox"
-                      name="acceptPolicy"
-                      className="h-4 w-4 text-blue-600 rounded focus:ring-blue-500 border-gray-300"
-                    />
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label
-                      htmlFor="terms"
-                      className="font-medium text-gray-700"
-                    >
-                      Creating an account means you're okay with our Terms of
-                      Service, Privacy Policy, and our default Notification
-                      Settings.
-                    </label>
-                  </div>
-                </div>
-              </div>
+              <Checkbox
+                onChange={handleChange}
+                checked={inputs.acceptPolicy}
+                label="Creating an account means you're okay with our Terms ofService, Privacy Policy, and our default NotificationSettings."
+                name="acceptPolicy"
+              />
             )}
             <button
               type="submit"
               onClick={onSubmit}
+              disabled={isMember ? false : isLoading || !inputs.acceptPolicy}
+              style={{
+                cursor: isMember
+                  ? "pointer"
+                  : isLoading || !inputs.acceptPolicy
+                  ? "not-allowed"
+                  : "pointer",
+              }}
               className="w-full py-3 px-6 bg-pink-600 text-white font-bold rounded-md hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
             >
               {isMember ? "Login" : " Create Account"}

@@ -16,7 +16,7 @@ if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
 }
 
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
 
