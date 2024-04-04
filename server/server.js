@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import "express-async-errors";
 import cookieParser from "cookie-parser";
-import morgan from "morgan";
+// import morgan from "morgan";
 import notFoundMiddleWare from "./middlewares/notFound.js";
 import errorHandlerMiddleware from "./middlewares/errorHandler.js";
 import userAuthRouter from "./routes/userAuthRoutes.js";
