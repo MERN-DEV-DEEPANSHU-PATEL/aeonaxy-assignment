@@ -12,9 +12,9 @@ import mongoose from "mongoose";
 
 const app = express();
 
-if (process.env.NODE_ENV !== "production") {
-  app.use(morgan("dev"));
-}
+// if (process.env.NODE_ENV !== "production") {
+//   app.use(morgan("dev"));
+// }
 
 app.use(cors({ origin: true, credentials: true }));
 app.use(cookieParser());
