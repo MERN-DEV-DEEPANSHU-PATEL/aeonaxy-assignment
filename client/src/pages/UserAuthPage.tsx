@@ -55,7 +55,8 @@ const UserAuthPage: FC = () => {
         toast.success("Login Success");
         navigate("/");
       } catch (error: any) {
-        setError({ isError: true, ...error.response.data });
+        toast.error(error.response.data.msg);
+        // setError({ isError: true, ...error.response.data });
       }
     }
   };
