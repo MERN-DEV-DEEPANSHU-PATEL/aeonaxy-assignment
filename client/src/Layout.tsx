@@ -35,7 +35,7 @@ const ProtectedRoute = ({ children }: any) => {
         setIsLoading(false);
       }
     };
-  }, []);
+  }, [userState.isUser]);
 
   return isLoading ? (
     <Spinner />

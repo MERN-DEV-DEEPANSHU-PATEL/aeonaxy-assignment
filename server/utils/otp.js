@@ -15,8 +15,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-console.log(process.env.EMAIL_PRIVATE);
-
 export const sendOtp = async (email) => {
   const otp = generateOTP();
   const mailOptions = {

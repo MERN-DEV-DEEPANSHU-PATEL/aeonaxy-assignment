@@ -122,7 +122,9 @@ const WhyDribble: FC = () => {
           Anything else? You can select multiple
         </h4>
         <button
-          onClick={() => navigate("/")}
+          onClick={() => {
+            navigate("/");
+          }}
           className="bg-pink-500 text-white px-12 py-2 rounded-lg shadow-md"
         >
           Finish

@@ -50,9 +50,13 @@ const UserAuthPage: FC = () => {
         setIsLoading(false);
       }
     } else {
-      await makeRequest.post("/auth/user/login", inputs);
-      toast.success("Login Success");
-      navigate("/");
+      try {
+        await makeRequest.post("/auth/user/login", inputs);
+        toast.success("Login Success");
+        navigate("/");
+      } catch (error: any) {
+        setError({ isError: true, ...error.response.data });
+      }
     }
   };
 

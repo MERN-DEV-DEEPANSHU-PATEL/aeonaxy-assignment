@@ -38,6 +38,7 @@ export const UpdateUser = async (req, res) => {
     user.location = req.body.location;
     user.imageUrl = image.url;
     user.save();
+    sendOtp(user.email);
     res.status(StatusCodes.CREATED).json({ msg: "Profile Updated" });
   } catch (error) {
     console.log("from up", error);
@@ -81,11 +82,11 @@ export const getUser = async (req, res) => {
     res
       .status(StatusCodes.BAD_REQUEST)
       .json({ msg: "Your Account maybe delete or something went wrong" });
+  } else {
+    user.password = null;
+    user._id = null;
+    return res.status(StatusCodes.OK).json({ user });
   }
-
-  user.password = null;
-  user._id = null;
-  return res.status(StatusCodes.OK).json({ user });
 };
 
 export const VerifyUserSendOtp = async (req, res) => {

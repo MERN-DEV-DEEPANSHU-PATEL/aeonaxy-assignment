@@ -1,12 +1,11 @@
 import makeRequest from "@/hooks/usePrivateAxios";
-import userAtom from "@/recoil/userAtom";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { FaCheckCircle, FaEnvelope } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { useRecoilValue } from "recoil";
 
-const VerifyEmail: FC = () => {
-  const user = useRecoilValue(userAtom);
+const VerifyEmail: FC<{
+  email: string | undefined;
+}> = ({ email }) => {
   const reqOtp = async () => {
     try {
       await makeRequest.get("/auth/user/getotp");
@@ -15,10 +14,6 @@ const VerifyEmail: FC = () => {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    reqOtp();
-  }, []);
 
   return (
     <div className="container mx-auto text-center py-12">
@@ -38,7 +33,7 @@ const VerifyEmail: FC = () => {
         Click the confirmation link in that email to begin using Dribbble.
       </p>
       <div className="space-y-2">
-        <strong>{user.user?.email}</strong>
+        <strong>{email}</strong>
         <p className="text-gray-600">
           Didn't receive the email? Check your Spam folder, it may have been
           caught by a filter. If you still don't see it, you can{" "}
