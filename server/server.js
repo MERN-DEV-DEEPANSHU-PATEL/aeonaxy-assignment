@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import "express-async-errors";
 import cookieParser from "cookie-parser";
-// import morgan from "morgan";
+import morgan from "morgan";
 import notFoundMiddleWare from "./middlewares/notFound.js";
 import errorHandlerMiddleware from "./middlewares/errorHandler.js";
 import userAuthRouter from "./routes/userAuthRoutes.js";
@@ -12,9 +12,9 @@ import mongoose from "mongoose";
 
 const app = express();
 
-// if (process.env.NODE_ENV !== "production") {
-//   app.use(morgan("dev"));
-// }
+if (process.env.NODE_ENV !== "production") {
+  app.use(morgan("dev"));
+}
 
 app.use(cors({ origin: true, credentials: true }));
 app.use(cookieParser());
