@@ -22,8 +22,8 @@ import multer from "multer";
 const userAuthRouter = express.Router();
 const upload = multer({ dest: "uploads/" });
 
-userAuthRouter.post("/register", apiLimiter, validateRegisterInput, Register);
-userAuthRouter.post("/login", apiLimiter, validateLoginInput, Login);
+userAuthRouter.post("/register", validateRegisterInput, Register);
+userAuthRouter.post("/login", validateLoginInput, Login);
 userAuthRouter.put(
   "/update",
   apiLimiter,
