@@ -1,7 +1,7 @@
 import Logo from "@/assets/Logo";
 import makeRequest from "@/hooks/usePrivateAxios";
 import { profilePic } from "@/recoil/userAtom";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -66,7 +66,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = true }) => {
           </div>
           <img
             id="avatarButton"
-            className="w-10 h-10 rounded-full cursor-pointer"
+            className="w-10 h-10 object-contain rounded-full cursor-pointer"
             src={profilePicUrl}
             alt="User dropdown"
           />

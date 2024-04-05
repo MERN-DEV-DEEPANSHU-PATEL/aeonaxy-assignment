@@ -1,18 +1,23 @@
 import makeRequest from "@/hooks/usePrivateAxios";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { FaCheckCircle, FaEnvelope } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 const VerifyEmail: FC<{
   email: string | undefined;
 }> = ({ email }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const reqOtp = async () => {
+    setIsLoading(true);
     try {
       await makeRequest.get("/auth/user/getotp");
       toast.success("Email sent For verificcation");
     } catch (error) {
+      toast.error("Any Network or server error in OTP verification");
       console.log(error);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -37,7 +42,13 @@ const VerifyEmail: FC<{
         <p className="text-gray-600">
           Didn't receive the email? Check your Spam folder, it may have been
           caught by a filter. If you still don't see it, you can{" "}
-          <button className="text-pink-500 underline" onClick={() => reqOtp()}>
+          <button
+            disabled={isLoading}
+            className={`text-pink-500 underline ${
+              isLoading ? "cursor-not-allowed" : "cursor-pointer"
+            }`}
+            onClick={() => reqOtp()}
+          >
             resend the confirmation email
           </button>
           .
@@ -46,7 +57,7 @@ const VerifyEmail: FC<{
           Wrong email address?{" "}
           <button
             className="text-pink-500 underline"
-            onClick={() => toast.info("Email Change Not Added")}
+            onClick={() => toast.info("Email Change Feature Not Added")}
           >
             Change it
           </button>

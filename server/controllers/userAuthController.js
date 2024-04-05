@@ -30,14 +30,17 @@ export const Register = async (req, res) => {
 };
 
 export const UpdateUser = async (req, res) => {
+  console.log(req.body);
   try {
-    if (!req.file) {
-      res.status(422).json({ msg: "Please Select an image" });
+    if (!req.file && !req.body?.isDefaultImg) {
+      return res.status(422).json({ msg: "Please Select an image" });
     }
-    const image = await uploadImageToCDN(req.file);
     const user = await UserModel.findById(req.user.userId);
+    if (req.body?.isDefaultImg !== "true") {
+      const image = await uploadImageToCDN(req.file);
+      user.imageUrl = image.url;
+    }
     user.location = req.body.location;
-    user.imageUrl = image.url;
     user.save();
     sendOtp(user.email);
     res.status(StatusCodes.CREATED).json({ msg: "Profile Updated" });

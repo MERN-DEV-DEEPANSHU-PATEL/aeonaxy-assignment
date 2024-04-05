@@ -13,10 +13,10 @@ interface AvatarInterface {
 const ProfileUpdatePage: FC = () => {
   const [avatar, setAvatar] = useState<AvatarInterface>({
     file: "",
-    avatarBase64:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQARF_GF2A3qUV3mw0lHLS0Lg4HCYARJ-RvbkOSRz-M8g&s",
+    avatarBase64: "https://iili.io/JNUXqQ9.png",
   });
   const [location, setLocation] = useState<string>("");
+  const [isDefaultImg, setIsDefaultImg] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -36,10 +36,14 @@ const ProfileUpdatePage: FC = () => {
   };
 
   const handleNextClick = async () => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const formData = new FormData();
-      formData.append("image", avatar.file);
+      if (isDefaultImg) {
+        formData.append("isDefaultImg", `${isDefaultImg}`);
+      } else {
+        formData.append("image", avatar.file);
+      }
       formData.append("location", location);
       const { data } = await makeRequest.put("/auth/user/update", formData, {
         headers: {
@@ -47,11 +51,12 @@ const ProfileUpdatePage: FC = () => {
         },
       });
       toast.success(data.msg);
-      setIsLoading(false);
       navigate("/auth/whydribbble");
     } catch (error: any) {
       console.log(error);
       toast.error(error.response.data.msg);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -66,42 +71,52 @@ const ProfileUpdatePage: FC = () => {
           Let others get to know you better! You can do these later
         </p>
         <div className="mb-4">
-          <label
-            htmlFor="avatar"
-            className="block text-gray-700 font-bold mb-2"
-          >
-            Add an avatar
-          </label>
           <div className="relative flex flex-wrap justify-center items-center gap-20">
             <input
               type="file"
               id="avatar"
               name="avatar"
               required
+              disabled={isDefaultImg}
               accept="image/*"
               onChange={handleAvatarUpload}
               className="hidden"
             />
             <label
               htmlFor="avatar"
-              className={`w-20 h-20 text-sm hover:text-xl hover:border-dashed transiton-smooth rounded-full bg-gray-200 border-dotted border-2 border-gray-500 flex items-center justify-center text-gray-500 cursor-pointer`}
+              className={`w-20 ${
+                isDefaultImg ? "cursor-not-allowed" : "cursor-pointer"
+              } h-20 text-sm hover:text-xl hover:border-dashed transiton-smooth rounded-full bg-gray-200 border-dotted border-2 border-gray-500 flex items-center justify-center text-gray-500`}
             >
               <img
                 src={avatar.avatarBase64}
                 alt="avatar"
-                className="w-14 h-14 hover:scale-110"
+                className="w-14 h-14 transition-smooth hover:scale-125"
               />
             </label>
-            <div>
+            <div className="flex flex-col">
               <label
                 htmlFor="avatar"
-                className="cursor-pointer my-10 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 dark:text-white"
+                className={`my-10 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 dark:text-white ${
+                  isDefaultImg ? "cursor-not-allowed" : "cursor-pointer"
+                }`}
               >
                 Choose Image
               </label>
-              <p className="mt-4 text-sm text-gray-500">
-                &gt; Or choose one of our defaults
-              </p>
+              <div className="flex p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                <label className="inline-flex items-center w-full cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isDefaultImg}
+                    onChange={() => setIsDefaultImg((prev) => !prev)}
+                    className="sr-only peer"
+                  />
+                  <div className="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full rtl:peer-checked:after:translate-x-[-100%] peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-500 peer-checked:bg-blue-600" />
+                  <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                    Choose Default Image
+                  </span>
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -130,7 +145,9 @@ const ProfileUpdatePage: FC = () => {
         </div>
         <button
           onClick={handleNextClick}
-          className="bg-pink-500 text-white py-2 px-4 rounded-md hover:bg-pink-600 transition-colors duration-300"
+          className={`bg-pink-500 text-white py-2 ${
+            isLoading ? "cursor-not-allowed" : "cursor-pointer"
+          } px-4 rounded-md hover:bg-pink-600 transition-colors duration-300`}
           disabled={isLoading}
         >
           Next

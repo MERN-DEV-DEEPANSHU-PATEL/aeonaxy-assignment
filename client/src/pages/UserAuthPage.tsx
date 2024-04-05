@@ -53,10 +53,9 @@ const UserAuthPage: FC = () => {
       try {
         await makeRequest.post("/auth/user/login", inputs);
         toast.success("Login Success");
-        navigate("/");
+        window.open("/");
       } catch (error: any) {
         toast.error(error.response.data.msg);
-        // setError({ isError: true, ...error.response.data });
       }
     }
   };
