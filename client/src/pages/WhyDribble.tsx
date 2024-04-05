@@ -1,6 +1,5 @@
 import makeRequest from "@/hooks/usePrivateAxios";
 import { FC, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 interface Option {
   id: number;
@@ -49,8 +48,6 @@ const WhyDribble: FC = () => {
   const isOptionSelected = (option: Option) => {
     return selectedOptions.some((opt) => opt.id === option.id);
   };
-
-  const navigate = useNavigate();
 
   return (
     <div className="md:max-w-[90%] mx-auto p-1 md:p-6 text-center">
@@ -123,9 +120,13 @@ const WhyDribble: FC = () => {
           Anything else? You can select multiple
         </h4>
         <button
-          onClick={() => {
-            makeRequest.get("/auth/user/getotp");
-            navigate("/");
+          onClick={async () => {
+            try {
+              await makeRequest.get("/auth/user/getotp");
+            } catch (error) {
+              console.log(error);
+            }
+            window.open("/");
           }}
           className="bg-pink-500 text-white px-12 py-2 rounded-lg shadow-md"
         >

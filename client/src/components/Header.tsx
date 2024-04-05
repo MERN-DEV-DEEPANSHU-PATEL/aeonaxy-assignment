@@ -16,8 +16,8 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = true }) => {
   const profilePicUrl = useRecoilValue(profilePic);
 
   const navigate = useNavigate();
-  const logout = () =>
-    makeRequest.get("/auth/user/logout").then(() => {
+  const logout = async () =>
+    await makeRequest.get("/auth/user/logout").then(() => {
       navigate("/auth");
       toast.info("Logout successful");
     });

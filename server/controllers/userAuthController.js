@@ -30,7 +30,6 @@ export const Register = async (req, res) => {
 };
 
 export const UpdateUser = async (req, res) => {
-  console.log(req.body);
   try {
     if (!req.file && !req.body?.isDefaultImg) {
       return res.status(422).json({ msg: "Please Select an image" });
@@ -78,6 +77,8 @@ export const Logout = (req, res) => {
   res.cookie("token", "logout", {
     httpOnly: true,
     expires: new Date(Date.now()),
+    secure: true,
+    sameSite: "none",
   });
   res.status(StatusCodes.OK).json({ msg: "user logged out!" });
 };
