@@ -26,7 +26,6 @@ userAuthRouter.post("/register", validateRegisterInput, Register);
 userAuthRouter.post("/login", validateLoginInput, Login);
 userAuthRouter.put(
   "/update",
-  apiLimiter,
   validateUpdateUserInput,
   authenticateUser,
   upload.single("image"),

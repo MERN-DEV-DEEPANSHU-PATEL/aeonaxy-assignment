@@ -23,6 +23,7 @@ export const Register = async (req, res) => {
       httpOnly: true,
       expires: new Date(Date.now() + oneDay),
       secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
     })
     .status(StatusCodes.CREATED)
     .json({ msg: "Register Successful" });
@@ -64,6 +65,7 @@ export const Login = async (req, res) => {
     httpOnly: true,
     expires: new Date(Date.now() + oneDay),
     secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
   });
   res.status(StatusCodes.OK).json({ msg: "Login Successful" });
 };
