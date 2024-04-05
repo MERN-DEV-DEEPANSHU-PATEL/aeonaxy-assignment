@@ -1,9 +1,11 @@
 import Logo from "@/assets/Logo";
 import makeRequest from "@/hooks/usePrivateAxios";
-import React, { useState } from "react";
+import { profilePic } from "@/recoil/userAtom";
+import React, { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useRecoilValue } from "recoil";
 
 interface HeaderProps {
   isLoggedIn: boolean;
@@ -11,6 +13,8 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ isLoggedIn = true }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const profilePicUrl = useRecoilValue(profilePic);
+
   const navigate = useNavigate();
   const logout = () =>
     makeRequest.get("/auth/user/logout").then(() => {
@@ -52,7 +56,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = true }) => {
           </nav>
         </div>
         <div className="flex items-center space-x-4">
-          <div className="relative">
+          <div className="relative hidden sm:block">
             <input
               type="text"
               placeholder="Search"
@@ -60,6 +64,12 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = true }) => {
             />
             <FaSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           </div>
+          <img
+            id="avatarButton"
+            className="w-10 h-10 rounded-full cursor-pointer"
+            src={profilePicUrl}
+            alt="User dropdown"
+          />
           {isLoggedIn ? (
             <button
               onClick={logout}
@@ -271,6 +281,19 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = true }) => {
               </li>
             </ul>
             <ul className="pt-4 mt-4 space-y-2 font-medium border-t border-gray-200 dark:border-gray-700">
+              <li>
+                <a
+                  href="#"
+                  className="flex items-center p-2 text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group"
+                >
+                  <FaSearch className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                  <input
+                    type="text"
+                    placeholder="Search"
+                    className=" ms-3 px-4   py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500 pr-8 sm:w-auto"
+                  />
+                </a>
+              </li>
               <li>
                 <a
                   href="#"

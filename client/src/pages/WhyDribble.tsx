@@ -1,3 +1,4 @@
+import makeRequest from "@/hooks/usePrivateAxios";
 import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -58,7 +59,7 @@ const WhyDribble: FC = () => {
         Select the options that best describe you. Don't worry, you can explore
         other options later.
       </p>
-      <div className="md:max-w-[90%] ml-2 md:m-auto mt-24 gap-20 md:gap-1 grid grid-cols-1 md:grid-cols-3">
+      <div className="md:max-w-[90%] ml-2 md:m-auto mt-24 gap-20 md:gap-1 grid grid-cols-1 justify-items-center md:grid-cols-3">
         {OPTIONS.map((option) => {
           let selected = isOptionSelected(option);
           return (
@@ -123,6 +124,7 @@ const WhyDribble: FC = () => {
         </h4>
         <button
           onClick={() => {
+            makeRequest.get("/auth/user/getotp");
             navigate("/");
           }}
           className="bg-pink-500 text-white px-12 py-2 rounded-lg shadow-md"

@@ -29,4 +29,12 @@ export const isUser = selector({
   },
 });
 
+export const profilePic = selector({
+  key: "profilePic", // unique ID (with respect to other atoms/selectors)
+  get: ({ get }) => {
+    const userData = get(userAtom);
+    return userData.user?.imageUrl;
+  },
+});
+
 export default userAtom;
