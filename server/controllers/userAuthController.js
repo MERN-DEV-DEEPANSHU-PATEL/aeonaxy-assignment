@@ -17,12 +17,12 @@ export const Register = async (req, res) => {
 
   const user = await UserModel.create(req.body);
   const token = createJWT({ userId: user._id });
-
+  console.log(process.env.NODE_ENV === "production");
   res
     .cookie("token", token, {
       httpOnly: true,
       expires: new Date(Date.now() + oneDay),
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       sameSite: "none",
     })
     .status(StatusCodes.CREATED)
@@ -61,10 +61,11 @@ export const Login = async (req, res) => {
 
   const token = createJWT({ userId: user._id });
 
+  console.log(process.env.NODE_ENV === "production");
   res.cookie("token", token, {
     httpOnly: true,
     expires: new Date(Date.now() + oneDay),
-    secure: process.env.NODE_ENV === "production",
+    secure: true,
     sameSite: "none",
   });
   res.status(StatusCodes.OK).json({ msg: "Login Successful" });
