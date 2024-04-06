@@ -1,6 +1,15 @@
+import { useEffect, useState } from "react";
 import { RotatingLines } from "react-loader-spinner";
 
 const Spinner = () => {
+  const [timer, setTimer] = useState(40);
+  useEffect(() => {
+    const clock = setInterval(() => setTimer((prev) => prev - 1), 1000);
+    return () => {
+      clearInterval(clock);
+    };
+  }, []);
+
   return (
     <div
       style={{
@@ -21,7 +30,8 @@ const Spinner = () => {
         ariaLabel="rotating-lines-loading"
       />
       <p className="text-2xl text-center">
-        This Site is Free Hosted so Performance maybe Poor
+        This Site is Free Hosted so Performance maybe Poor Please Wait {timer}
+        ....
       </p>
     </div>
   );
